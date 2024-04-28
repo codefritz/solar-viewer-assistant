@@ -27,12 +27,10 @@ func main() {
 		fmt.Printf("Date: %s, Produced: %f\n", date, produced)
 		analytics.UpdateEnergyHistory(date, produced)
 	}
-
 }
 
 // fetch data from the server via HTTP GET
 func fetchData(url string) string {
-
 	// Fetch the json from the url
 	resp, err := http.Get(url)
 	if err != nil {
