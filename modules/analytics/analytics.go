@@ -7,13 +7,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
-	"time"
+	"solar-viewer.de/modules/domain"
 )
 
 var db *sql.DB
 
-func UpdateEnergyHistory(reportingDate time.Time, energy float64) {
-	log.Printf("Store analytics data for date: %s ...", reportingDate.String())
+func UpdateEnergyHistory(entry domain.DayReport) {
+	log.Printf("Store analytics data for date: %s ...", entry.ReportDate.String())
 
 	connect()
 
@@ -22,7 +22,7 @@ func UpdateEnergyHistory(reportingDate time.Time, energy float64) {
 	if err != nil {
 		log.Fatalf("impossible insert energy data: %s", err)
 	}
-	resp, err := insert.Exec(reportingDate, energy)
+	resp, err := insert.Exec(entry.ReportDate, entry.Energy)
 	insert.Close()
 
 	if err != nil {
@@ -55,7 +55,7 @@ func connect() {
 		log.Fatal(pingErr)
 	}
 
-	// For test we read user mail here.
+	// For testing we read user mail here.
 	if err := db.QueryRow("SELECT reproting_date FROM energy_history limit 1"); err != nil {
 		fmt.Errorf("Error while reading %s", err)
 	}

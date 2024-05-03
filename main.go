@@ -10,7 +10,7 @@ func main() {
 
 	fmt.Println("Hello, Solar Viewer!")
 	for _, report := range nepviewer.FetchLatestData() {
-		analytics.UpdateEnergyHistory(report.ReportDate, report.Energy)
+		analytics.UpdateEnergyHistory(report)
 	}
 	fmt.Println("Update is done.")
 }
