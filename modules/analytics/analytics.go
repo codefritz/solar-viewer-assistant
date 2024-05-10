@@ -12,10 +12,14 @@ import (
 
 var db *sql.DB
 
-func UpdateEnergyHistory(entry domain.DayReport) {
-	log.Printf("Store analytics data for date: %s ...", entry.ReportDate.String())
-
+func UpdateEnergyHistory(dayReports []domain.DayReport) {
 	connect()
+	for _, report := range dayReports {
+		updateEntry(report)
+	}
+}
+func updateEntry(entry domain.DayReport) {
+	log.Printf("Store analytics data for date: %s ...", entry.ReportDate.String())
 
 	query := "INSERT IGNORE INTO `energy_history` (`reporting_date`, `energy_kw`) VALUES (?, ?);"
 	insert, err := db.Prepare(query)
