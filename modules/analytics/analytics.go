@@ -33,7 +33,7 @@ func updateEntry(entry domain.DayReport) {
 		log.Fatal(err)
 	}
 
-	log.Println(resp.LastInsertId())
+	log.Println("Inserted row: ", resp)
 }
 func connect() {
 	// ssh -N -L 3306:kbatchdb.k-cloud.io:3306 acharton@shell001.ek-prod.dus1.cloud
