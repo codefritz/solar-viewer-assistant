@@ -13,11 +13,14 @@ import (
 	"time"
 )
 
+const baseUrl = "https://user.nepviewer.com/pv_monitor/proxy/week_sum/"
+
 func FetchLatestData() []domain.DayReport {
 	nepUser := os.Getenv("NEP_USER")
 	fmt.Println("Fetching data from the server...")
 
-	data := fetchData("https://user.nepviewer.com/pv_monitor/proxy/week_sum/" + nepUser)
+	url := baseUrl + nepUser
+	data := fetchData(url)
 	dataMap := toMap(data)
 
 	report := make([]domain.DayReport, 0)
