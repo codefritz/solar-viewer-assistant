@@ -2,7 +2,6 @@ package analytics
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -60,9 +59,9 @@ func connect() {
 	}
 
 	// For testing we read user mail here.
-	if err := db.QueryRow("SELECT reproting_date FROM energy_history limit 1"); err != nil {
-		fmt.Errorf("Error while reading %s", err)
+	if err := db.QueryRow("SELECT reproting_date FROM energy_history limit 1"); err.Err() != nil {
+		log.Fatalf("Error while reading %s", err.Err())
 	}
 
-	fmt.Println("Connected!")
+	log.Println("Connected!")
 }
