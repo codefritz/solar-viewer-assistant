@@ -59,7 +59,7 @@ func connect() {
 	}
 
 	// For testing we read user mail here.
-	if err := db.QueryRow("SELECT reproting_date FROM energy_history limit 1"); err.Err() != nil {
+	if err := db.QueryRow("SELECT reporting_date FROM energy_history limit 1"); err.Err() != nil {
 		log.Fatalf("Error while reading %s", err.Err())
 	}
 
