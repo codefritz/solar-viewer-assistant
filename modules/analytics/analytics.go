@@ -23,7 +23,7 @@ func updateEntry(entry domain.DayReport) {
 	query := "INSERT IGNORE INTO `energy_history` (`reporting_date`, `energy_kw`) VALUES (?, ?);"
 	insert, err := db.Prepare(query)
 	if err != nil {
-		log.Fatalf("impossible insert energy data: %s", err)
+		log.Fatalf("impossible to insert energy data: %s", err)
 	}
 	resp, err := insert.Exec(entry.ReportDate, entry.Energy)
 	insert.Close()
@@ -58,9 +58,9 @@ func connect() {
 		log.Fatal(pingErr)
 	}
 
-	// For testing we read user mail here.
+	// For testing the connection we can query the database.
 	if err := db.QueryRow("SELECT reporting_date FROM energy_history limit 1"); err.Err() != nil {
-		log.Fatalf("Error while reading %s", err.Err())
+		log.Fatalf("Error while testing connection %s", err.Err())
 	}
 
 	log.Println("Connected!")
