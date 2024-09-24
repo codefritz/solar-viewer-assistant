@@ -23,7 +23,7 @@ func updateEntry(entry domain.DayReport) {
 	query := "INSERT IGNORE INTO `energy_history` (`reporting_date`, `energy_kw`) VALUES (?, ?);"
 	insert, err := db.Prepare(query)
 	if err != nil {
-		log.Fatalf("impossible to insert energy data: %s", err)
+		log.Fatalf("Impossible to insert energy data: %s", err)
 	}
 	resp, err := insert.Exec(entry.ReportDate, entry.Energy)
 	insert.Close()
