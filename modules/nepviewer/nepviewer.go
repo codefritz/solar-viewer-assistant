@@ -16,7 +16,7 @@ import (
 const baseUrl = "https://user.nepviewer.com/pv_monitor/proxy/week_sum/"
 
 func FetchLatestData() []domain.DayReport {
-	fmt.Println("Fetching data from the server...")
+	log.Println("Fetching data from the server...")
 
 	nepUser := os.Getenv("NEP_USER")
 	url := fmt.Sprintf("%s%s", baseUrl, nepUser)
@@ -27,7 +27,7 @@ func FetchLatestData() []domain.DayReport {
 	for _, row := range dataMap {
 		date := stringToDate(row[2].(string))
 		produced := row[1].(float64)
-		fmt.Printf("Date: %s, Produced: %f\n", date, produced)
+		log.Printf("Date: %s, Produced: %f\n", date, produced)
 		report = append(report, domain.DayReport{ReportDate: date, Energy: produced})
 	}
 	return report
