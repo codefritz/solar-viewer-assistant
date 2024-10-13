@@ -18,8 +18,6 @@ func FetchWeather() domain.Weather {
 
 	openWeatherKey := os.Getenv("OW_API_KEY")
 
-	log.Printf("Check: %s\n", openWeatherKey[:5])
-
 	url := fmt.Sprintf("%s?lat=%s&lon=%s&appid=%s", baseurl, "52.5901", "13.3729", openWeatherKey)
 	jsonData := fetchData(url)
 

@@ -32,5 +32,6 @@ jobs:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASS: ${{ secrets.DB_PASS }}
         NEP_USER: ${{ secrets.NEP_USER }}
+        OW_API_KEY: ${{ secrets.OW_API_KEY }}
       working-directory: ./
       run: go run main.go
