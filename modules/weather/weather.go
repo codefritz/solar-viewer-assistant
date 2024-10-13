@@ -21,6 +21,8 @@ func FetchWeather() domain.Weather {
 	url := fmt.Sprintf("%s?lat=%s&lon=%s&appid=%s", baseurl, "52.5901", "13.3729", openWeatherKey)
 	jsonData := fetchData(url)
 
+	log.Printf("jsonData: %s\n", jsonData)
+
 	var weatherData WeatherData
 	err := json.Unmarshal([]byte(jsonData), &weatherData)
 	if err != nil {
