@@ -14,7 +14,7 @@ import (
 const baseurl = "https://api.openweathermap.org/data/2.5/weather"
 
 func FetchWeather() domain.Weather {
-	log.Println("Fetching weather jsonData from the server...")
+	log.Printf("Fetching weather jsonData from the server %s...", baseurl)
 
 	openWeatherKey := os.Getenv("OW_API_KEY")
 
