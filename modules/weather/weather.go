@@ -33,8 +33,6 @@ func FetchWeather() domain.Weather {
 	}
 
 	dt := time.Unix(weatherData.Dt, 0).UTC()
-	date := dt.Format("2006-01-02")
-
 	log.Printf("WeatherData: %s\n", weatherData)
 
 	return domain.Weather{Cloudiness: clouds, ReportDate: dt}
