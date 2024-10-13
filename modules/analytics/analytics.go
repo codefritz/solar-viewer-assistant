@@ -11,11 +11,31 @@ import (
 
 var db *sql.DB
 
-func UpdateEnergyHistory(dayReports []domain.DayReport) {
+func UpdateEnergyHistory(dayReports []domain.DayReport, weather domain.Weather) {
 	connect()
 	for _, report := range dayReports {
 		updateEntry(report)
 	}
+
+	updateWeather(weather)
+}
+
+func updateWeather(weather domain.Weather) {
+	log.Printf("Store weather data for date: %s ...", weather.ReportDate.String())
+
+	query := "INSERT IGNORE INTO `weather_history` (`reporting_date`, `cloudiness`) VALUES (?, ?);"
+	insert, err := db.Prepare(query)
+	if err != nil {
+		log.Fatalf("Impossible to insert weather data: %s", err)
+	}
+	resp, err := insert.Exec(weather.ReportDate, weather.Cloudiness)
+	insert.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Inserted row: ", resp)
 }
 func updateEntry(entry domain.DayReport) {
 	log.Printf("Store analytics data for date: %s ...", entry.ReportDate.String())

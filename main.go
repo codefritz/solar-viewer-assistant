@@ -4,12 +4,16 @@ import (
 	"log"
 	"solar-viewer.de/modules/analytics"
 	"solar-viewer.de/modules/nepviewer"
+	"solar-viewer.de/modules/weather"
 )
 
 func main() {
 
 	log.Println("Hello, Solar Viewer!")
 	dayReports := nepviewer.FetchLatestData()
-	analytics.UpdateEnergyHistory(dayReports)
+	weatherReport := weather.FetchWeather()
+	analytics.UpdateEnergyHistory(dayReports, weatherReport)
+
+	log.Println(weatherReport)
 	log.Println("Update is done.")
 }
