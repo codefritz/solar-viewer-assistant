@@ -12,15 +12,15 @@ import (
 var db *sql.DB
 
 func UpdateEnergyHistory(dayReports []domain.DayReport, weather domain.Weather) {
-	connect()
+	Connect()
 	for _, report := range dayReports {
 		updateEntry(report)
 	}
 
-	updateWeather(weather)
+	UpdateWeather(weather)
 }
 
-func updateWeather(weather domain.Weather) {
+func UpdateWeather(weather domain.Weather) {
 	log.Printf("Store weather data for date: %s ...", weather.ReportDate.String())
 
 	query := "INSERT IGNORE INTO `weather_history` (`reporting_date`, `cloudiness`, `day_minutes`) VALUES (?, ?, ?);"
@@ -54,7 +54,7 @@ func updateEntry(entry domain.DayReport) {
 
 	log.Println("Inserted row: ", resp)
 }
-func connect() {
+func Connect() {
 	// ssh -N -L 3306:kbatchdb.k-cloud.io:3306 acharton@shell001.ek-prod.dus1.cloud
 
 	// Capture connection properties.

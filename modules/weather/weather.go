@@ -11,14 +11,15 @@ import (
 	"time"
 )
 
-const baseurl = "https://api.openweathermap.org/data/2.5/weather"
+const baseurl = "https://api.openweathermap.org/data/3.0/onecall/timemachine"
 
-func FetchWeather() domain.Weather {
+func FetchWeather(dt string) domain.Weather {
 	log.Printf("Fetching weather jsonData from the server %s...", baseurl)
 
 	openWeatherKey := os.Getenv("OW_API_KEY")
 
-	url := fmt.Sprintf("%s?lat=%s&lon=%s&appid=%s", baseurl, "52.5901", "13.3729", openWeatherKey)
+	url := fmt.Sprintf("%s?lat=%s&lon=%s&dt=%s&appid=%s", baseurl, "52.5901", "13.3729", dt, openWeatherKey)
+	log.Println(url)
 	jsonData := fetchData(url)
 
 	log.Printf("jsonData: %s\n", jsonData)
@@ -29,18 +30,19 @@ func FetchWeather() domain.Weather {
 		log.Fatal(err)
 	}
 
-	clouds := 0
-	if weatherData.Clouds != nil {
-		clouds = weatherData.Clouds.All
+	if len(weatherData.Data) == 0 {
+		log.Fatal("No weather data available")
 	}
 
-	dayTimeMinutes := (weatherData.Sys.Sunset - weatherData.Sys.Sunrise) / 60
-	log.Printf("Sunrise: %d, Sunset: %d, DayTimeMinutes: %d\n", weatherData.Sys.Sunrise, weatherData.Sys.Sunset, dayTimeMinutes)
+	data := weatherData.Data[0]
 
-	dt := time.Unix(weatherData.Dt, 0).UTC()
-	log.Printf("WeatherData: %s\n", weatherData)
+	clouds := data.Clouds
 
-	return domain.Weather{Cloudiness: clouds, ReportDate: dt, DayTimeMinutes: dayTimeMinutes}
+	return domain.Weather{
+		Cloudiness:     clouds,
+		ReportDate:     time.Unix(data.Dt, 0).UTC(),
+		DayTimeMinutes: (data.Sunset - data.Sunrise) / 60,
+	}
 }
 
 // fetch data from the server via HTTP GET
@@ -61,16 +63,16 @@ func fetchData(url string) string {
 }
 
 type WeatherData struct {
-	Clouds *Clouds `json:"clouds"`
-	Dt     int64   `json:"dt"`
-	Sys    Sys     `json:"sys"`
+	Lat            float64 `json:"lat"`
+	Lon            float64 `json:"lon"`
+	Timezone       string  `json:"timezone"`
+	TimezoneOffset int     `json:"timezone_offset"`
+	Data           []Data  `json:"data"`
 }
 
-type Clouds struct {
-	All int `json:"all"`
-}
-
-type Sys struct {
-	Sunrise int `json:"sunrise"`
-	Sunset  int `json:"sunset"`
+type Data struct {
+	Dt      int64 `json:"dt"`
+	Sunrise int   `json:"sunrise"`
+	Sunset  int   `json:"sunset"`
+	Clouds  int   `json:"clouds"`
 }
