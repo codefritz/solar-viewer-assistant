@@ -34,10 +34,13 @@ func FetchWeather() domain.Weather {
 		clouds = weatherData.Clouds.All
 	}
 
+	dayTimeMinutes := (weatherData.Sys.Sunset - weatherData.Sys.Sunrise) / 60
+	log.Printf("Sunrise: %d, Sunset: %d, DayTimeMinutes: %d\n", weatherData.Sys.Sunrise, weatherData.Sys.Sunset, dayTimeMinutes)
+
 	dt := time.Unix(weatherData.Dt, 0).UTC()
 	log.Printf("WeatherData: %s\n", weatherData)
 
-	return domain.Weather{Cloudiness: clouds, ReportDate: dt}
+	return domain.Weather{Cloudiness: clouds, ReportDate: dt, DayTimeMinutes: dayTimeMinutes}
 }
 
 // fetch data from the server via HTTP GET
@@ -60,8 +63,14 @@ func fetchData(url string) string {
 type WeatherData struct {
 	Clouds *Clouds `json:"clouds"`
 	Dt     int64   `json:"dt"`
+	Sys    Sys     `json:"sys"`
 }
 
 type Clouds struct {
 	All int `json:"all"`
+}
+
+type Sys struct {
+	Sunrise int `json:"sunrise"`
+	Sunset  int `json:"sunset"`
 }

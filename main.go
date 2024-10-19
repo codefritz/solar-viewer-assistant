@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	log.Println("Hello, Solar Viewer!")
+	log.Println("Hello, Solar Viewer! Start updating the data...")
 	dayReports := nepviewer.FetchLatestData()
 	weatherReport := weather.FetchWeather()
 	analytics.UpdateEnergyHistory(dayReports, weatherReport)

@@ -10,6 +10,7 @@ type DayReport struct {
 }
 
 type Weather struct {
-	ReportDate time.Time
-	Cloudiness int
+	ReportDate     time.Time
+	Cloudiness     int
+	DayTimeMinutes int
 }

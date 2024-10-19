@@ -23,12 +23,12 @@ func UpdateEnergyHistory(dayReports []domain.DayReport, weather domain.Weather) 
 func updateWeather(weather domain.Weather) {
 	log.Printf("Store weather data for date: %s ...", weather.ReportDate.String())
 
-	query := "INSERT IGNORE INTO `weather_history` (`reporting_date`, `cloudiness`) VALUES (?, ?);"
+	query := "INSERT IGNORE INTO `weather_history` (`reporting_date`, `cloudiness`, `day_minutes`) VALUES (?, ?, ?);"
 	insert, err := db.Prepare(query)
 	if err != nil {
 		log.Fatalf("Impossible to insert weather data: %s", err)
 	}
-	resp, err := insert.Exec(weather.ReportDate, weather.Cloudiness)
+	resp, err := insert.Exec(weather.ReportDate, weather.Cloudiness, weather.DayTimeMinutes)
 	insert.Close()
 
 	if err != nil {
