@@ -22,6 +22,19 @@
   "links": [],
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "panels": [],
+      "title": "Energy",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "mysql",
         "uid": "fdhshjee14ydcf"
@@ -80,7 +93,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "options": {
@@ -105,6 +118,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
+      "pluginVersion": "11.4.0-77383",
       "targets": [
         {
           "dataset": "defaultdb",
@@ -171,11 +185,17 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "id": 4,
       "options": {
         "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
@@ -192,7 +212,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.1.0-69622",
+      "pluginVersion": "11.4.0-77383",
       "targets": [
         {
           "dataset": "defaultdb",
@@ -241,6 +261,117 @@
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "continuous-YlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "mappings": [],
+          "max": 120,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kwatt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 9,
+      "options": {
+        "barRadius": 0.2,
+        "barWidth": 0.97,
+        "colorByField": "energy_kw",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.4.0-77383",
+      "targets": [
+        {
+          "dataset": "defaultdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "fdhshjee14ydcf"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\nMONTHNAME(reporting_date),\nsum(energy_kw)\nFROM defaultdb.energy_history\nWHERE reporting_date > date_sub(now(), interval 12 month)\nGROUP BY 1",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Energy produced 6 months",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "fdhshjee14ydcf"
+      },
+      "fieldConfig": {
+        "defaults": {
           "mappings": [],
           "max": 5,
           "min": 0,
@@ -266,10 +397,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 9
       },
       "id": 3,
       "options": {
@@ -287,7 +418,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.1.0-69622",
+      "pluginVersion": "11.4.0-77383",
       "targets": [
         {
           "dataset": "defaultdb",
@@ -297,7 +428,7 @@
           },
           "editorMode": "builder",
           "format": "table",
-          "rawSql": "SELECT energy_kw FROM defaultdb.energy_history LIMIT 50 ",
+          "rawSql": "SELECT energy_kw FROM defaultdb.energy_history ORDER BY reporting_date DESC LIMIT 1 ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -319,7 +450,15 @@
                 "type": "groupBy"
               }
             ],
-            "limit": 50
+            "limit": 1,
+            "orderBy": {
+              "property": {
+                "name": "reporting_date",
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "orderByDirection": "DESC"
           },
           "table": "energy_history"
         }
@@ -388,10 +527,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 9
       },
       "id": 1,
       "options": {
@@ -408,11 +547,11 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "reporting_date"
+            "displayName": "Reporting Date"
           }
         ]
       },
-      "pluginVersion": "11.1.0-69622",
+      "pluginVersion": "11.4.0-77383",
       "targets": [
         {
           "dataset": "defaultdb",
@@ -422,7 +561,7 @@
           },
           "editorMode": "builder",
           "format": "table",
-          "rawSql": "SELECT energy_kw, reporting_date FROM defaultdb.energy_history LIMIT 50 ",
+          "rawSql": "SELECT energy_kw, reporting_date FROM defaultdb.energy_history ORDER BY reporting_date DESC LIMIT 50 ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -453,29 +592,259 @@
                 "type": "groupBy"
               }
             ],
-            "limit": 50
+            "limit": 50,
+            "orderBy": {
+              "property": {
+                "name": [
+                  "reporting_date"
+                ],
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "orderByDirection": "DESC"
           },
           "table": "energy_history"
         }
       ],
       "title": "Energy produced last days - table",
       "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Weather [beta]",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "fdhshjee14ydcf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 19
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0-77383",
+      "targets": [
+        {
+          "dataset": "defaultdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "fdhshjee14ydcf"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n$__timeGroup(reporting_date, 1d) as time,\ncloudiness\nFROM defaultdb.weather_history\nWHERE reporting_date > date_sub(now(), interval ($day_interval) day)",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "cloudiness",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "reporting_date",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "weather_history"
+        }
+      ],
+      "title": "Cloudiness percentage 0-100",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "fdhshjee14ydcf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "id": 8,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {},
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "name": "Energy",
+            "tooltip": true,
+            "type": "osm-standard"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "coords",
+          "lat": 52.59014889686937,
+          "lon": 13.372914830874073,
+          "zoom": 17
+        }
+      },
+      "pluginVersion": "11.4.0-77383",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "Map",
+      "type": "geomap"
     }
   ],
-  "schemaVersion": 39,
+  "preload": false,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": "Last 30 days",
-          "value": "31"
+          "text": "8",
+          "value": "8"
         },
-        "hide": 0,
         "includeAll": false,
         "label": "Days ",
-        "multi": false,
         "name": "day_interval",
         "options": [
           {
@@ -484,7 +853,7 @@
             "value": "4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "Last 7 days",
             "value": "8"
           },
@@ -494,14 +863,27 @@
             "value": "15"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Last 30 days",
             "value": "31"
+          },
+          {
+            "selected": false,
+            "text": "Last 60 days",
+            "value": "61"
+          },
+          {
+            "selected": false,
+            "text": "Last 3 Months",
+            "value": "91"
+          },
+          {
+            "selected": false,
+            "text": "Last 1/1 year",
+            "value": "183"
           }
         ],
-        "query": "Last 3 days : 4,Last 7 days : 8,Last 14 days : 15,Last 30 days : 31",
-        "queryValue": "",
-        "skipUrlSync": false,
+        "query": "Last 3 days : 4,Last 7 days : 8,Last 14 days : 15,Last 30 days : 31, Last 60 days : 61, Last 3 Months : 91, Last 1/1 year : 183",
         "type": "custom"
       }
     ]
@@ -510,11 +892,10 @@
     "from": "now-7d",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {},
   "timezone": "browser",
   "title": "Solar Viewer",
   "uid": "edjm5qzm8treob",
-  "version": 11,
+  "version": 21,
   "weekStart": ""
 }
