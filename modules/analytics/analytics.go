@@ -14,7 +14,7 @@ var db *sql.DB
 func UpdateEnergyHistory(dayReports []domain.DayReport, weather domain.Weather) {
 	connect()
 	for _, report := range dayReports {
-		updateEntry(report)
+		updateEnergy(report)
 	}
 
 	updateWeather(weather)
@@ -37,7 +37,7 @@ func updateWeather(weather domain.Weather) {
 
 	log.Println("Inserted row: ", resp)
 }
-func updateEntry(entry domain.DayReport) {
+func updateEnergy(entry domain.DayReport) {
 	log.Printf("Store analytics data for date: %s ...", entry.ReportDate.String())
 
 	query := "INSERT IGNORE INTO `energy_history` (`reporting_date`, `energy_kw`) VALUES (?, ?);"
@@ -55,8 +55,6 @@ func updateEntry(entry domain.DayReport) {
 	log.Println("Inserted row: ", resp)
 }
 func connect() {
-	// ssh -N -L 3306:kbatchdb.k-cloud.io:3306 acharton@shell001.ek-prod.dus1.cloud
-
 	// Capture connection properties.
 	cfg := mysql.Config{
 		User:                 os.Getenv("DB_USER"),
