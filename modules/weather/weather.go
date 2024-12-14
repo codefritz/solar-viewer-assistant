@@ -23,22 +23,22 @@ func FetchWeather() domain.Weather {
 
 	log.Printf("jsonData: %s\n", jsonData)
 
-	var weatherData WeatherData
-	err := json.Unmarshal([]byte(jsonData), &weatherData)
+	var openWeatherData OpenWeatherData
+	err := json.Unmarshal([]byte(jsonData), &openWeatherData)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	clouds := 0
-	if weatherData.Clouds != nil {
-		clouds = weatherData.Clouds.All
+	if openWeatherData.Clouds != nil {
+		clouds = openWeatherData.Clouds.All
 	}
 
-	dayTimeMinutes := (weatherData.Sys.Sunset - weatherData.Sys.Sunrise) / 60
-	log.Printf("Sunrise: %d, Sunset: %d, DayTimeMinutes: %d\n", weatherData.Sys.Sunrise, weatherData.Sys.Sunset, dayTimeMinutes)
+	dayTimeMinutes := (openWeatherData.Sys.Sunset - openWeatherData.Sys.Sunrise) / 60
+	log.Printf("Sunrise: %d, Sunset: %d, DayTimeMinutes: %d\n", openWeatherData.Sys.Sunrise, openWeatherData.Sys.Sunset, dayTimeMinutes)
 
-	dt := time.Unix(weatherData.Dt, 0).UTC()
-	log.Printf("WeatherData: %s\n", weatherData)
+	dt := time.Unix(openWeatherData.Dt, 0).UTC()
+	log.Printf("OpenWeatherData: %s\n", openWeatherData)
 
 	return domain.Weather{Cloudiness: clouds, ReportDate: dt, DayTimeMinutes: dayTimeMinutes}
 }
@@ -60,7 +60,7 @@ func fetchData(url string) string {
 	return string(body)
 }
 
-type WeatherData struct {
+type OpenWeatherData struct {
 	Clouds *Clouds `json:"clouds"`
 	Dt     int64   `json:"dt"`
 	Sys    Sys     `json:"sys"`
