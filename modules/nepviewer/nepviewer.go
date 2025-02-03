@@ -13,43 +13,116 @@ import (
 	"time"
 )
 
-const baseUrl = "https://user.nepviewer.com/pv_monitor/proxy/week_sum/"
+// const baseUrl = "https://user.nepviewer.com/pv_monitor/proxy/week_sum/"
+const baseUrl = "https://api.nepviewer.net/v2/site/statistics/echarts"
+
+type RequestPayload struct {
+	Types     int    `json:"types"`
+	RangeDate string `json:"rangeDate"`
+	Sid       string `json:"sid"`
+}
 
 func FetchLatestData() []domain.DayReport {
 	log.Println("Fetching data from the server...")
 
-	nepUser := os.Getenv("NEP_USER")
-	url := fmt.Sprintf("%s%s", baseUrl, nepUser)
+	url := fmt.Sprintf(baseUrl)
 	data, err := fetchData(url)
 	// we add by pass here, to return a fixed DayReport
 	// the call is not getting error, but the data is not correct
 	// and will otherwise cause the program to crash in deserialize step.
-	if err != nil || 1 == 1 {
+	if err != nil {
 		log.Println("Error fetching data, returning fixed DayReport")
 		yesterday := time.Now().AddDate(0, 0, -1)
 		return []domain.DayReport{
 			{ReportDate: yesterday, Energy: 0},
 		}
 	}
-	dataMap := toMap(data)
-	report := make([]domain.DayReport, 0)
-	// loop through the dataMap
-	for _, row := range dataMap {
-		date := stringToDate(row[2].(string))
-		produced := row[1].(float64)
-		log.Printf("Date: %s, Produced: %f\n", date, produced)
-		report = append(report, domain.DayReport{ReportDate: date, Energy: produced})
+	var response struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+		Data struct {
+			Legend    []string `json:"legend"`
+			XAxisData []string `json:"xAxisData"`
+			Series    []struct {
+				Stack string    `json:"stack"`
+				Name  string    `json:"name"`
+				Data  []float64 `json:"data"`
+			} `json:"series"`
+		} `json:"data"`
 	}
-	return report
 
+	err = json.Unmarshal([]byte(data), &response)
+	if err != nil {
+		log.Println("Error parsing data, returning fixed DayReport")
+		yesterday := time.Now().AddDate(0, 0, -1)
+		return []domain.DayReport{
+			{ReportDate: yesterday, Energy: 0},
+		}
+	}
+
+	// Create DayReport instances from the parsed data
+	report := make([]domain.DayReport, 0)
+	for i, dateStr := range response.Data.XAxisData {
+		date := stringToDate(dateStr)
+		energy := response.Data.Series[0].Data[i]
+		report = append(report, domain.DayReport{ReportDate: date, Energy: energy})
+	}
+
+	return report
+}
+
+func stringToDate(data string) time.Time {
+	// Split data into day and month
+	dateParts := strings.Split(data, "/")
+	day, _ := strconv.Atoi(dateParts[0])
+	month, _ := strconv.Atoi(dateParts[1])
+	year := time.Now().Year() // Use the current year
+
+	// Transform the data into a time.Time object
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }
 
 // fetch data from the server via HTTP GET
 func fetchData(url string) (string, error) {
-	// Fetch the json from the url
-	resp, err := http.Get(url)
+	authToken := os.Getenv("AUTH_TOKEN")
+	nepUser := os.Getenv("NEP_USER")
+	sign := os.Getenv("SIGN")
+	// Create the request payload
+	payload := RequestPayload{
+		Types:     3,
+		RangeDate: "",
+		Sid:       nepUser,
+	}
+	// Serialize the payload to JSON
+	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonPayload)))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf(authToken))
+	req.Header.Set("sign", sign)
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Origin", "https://user.nepviewer.com")
+	req.Header.Set("Referer", "https://user.nepviewer.com/")
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "cross-site")
+	req.Header.Set("app", "0")
+	req.Header.Set("client", "web")
+	req.Header.Set("lan", "1")
+	req.Header.Set("oem", "NEP")
+	req.Header.Set("sec-ch-ua-mobile", "?0")
+	req.Header.Set("sec-ch-ua-platform", "macOS")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
 	}
 	defer resp.Body.Close()
 
@@ -59,28 +132,4 @@ func fetchData(url string) (string, error) {
 	}
 
 	return string(body), nil
-}
-
-func toMap(data string) DataMap {
-	var dataMap DataMap
-	err := json.Unmarshal([]byte(data), &dataMap)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return dataMap
-}
-
-type DataMap [][]any
-
-func stringToDate(data string) time.Time {
-	// split data into day, month, year
-	dateParts := strings.Split(data, ".")
-	// dateParts[2] to int
-	year, _ := strconv.Atoi(dateParts[2])
-	year += 2000
-	day, _ := strconv.Atoi(dateParts[1])
-	month, _ := strconv.Atoi(dateParts[0])
-	// transform the data into a time.Time object
-
-	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }
