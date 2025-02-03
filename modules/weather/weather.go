@@ -16,6 +16,7 @@ const baseurl = "https://api.openweathermap.org/data/2.5/weather"
 func FetchWeather() domain.Weather {
 	log.Printf("Fetching weather jsonData from the server %s...", baseurl)
 
+	// set the openWeatherKey from the environment variable
 	openWeatherKey := os.Getenv("OW_API_KEY")
 
 	url := fmt.Sprintf("%s?lat=%s&lon=%s&appid=%s", baseurl, "52.5901", "13.3729", openWeatherKey)
