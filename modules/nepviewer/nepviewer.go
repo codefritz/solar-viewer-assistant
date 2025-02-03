@@ -20,7 +20,14 @@ func FetchLatestData() []domain.DayReport {
 
 	nepUser := os.Getenv("NEP_USER")
 	url := fmt.Sprintf("%s%s", baseUrl, nepUser)
-	data := fetchData(url)
+	data, err := fetchData(url)
+	if err != nil {
+		log.Println("Error fetching data, returning fixed DayReport")
+		yesterday := time.Now().AddDate(0, 0, -1)
+		return []domain.DayReport{
+			{ReportDate: yesterday, Energy: 0},
+		}
+	}
 	dataMap := toMap(data)
 	report := make([]domain.DayReport, 0)
 	// loop through the dataMap
@@ -35,7 +42,7 @@ func FetchLatestData() []domain.DayReport {
 }
 
 // fetch data from the server via HTTP GET
-func fetchData(url string) string {
+func fetchData(url string) (string, error) {
 	// Fetch the json from the url
 	resp, err := http.Get(url)
 	if err != nil {
@@ -45,10 +52,10 @@ func fetchData(url string) string {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
-	return string(body)
+	return string(body), nil
 }
 
 func toMap(data string) DataMap {
