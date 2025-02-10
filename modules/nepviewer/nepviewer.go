@@ -53,8 +53,8 @@ func FetchLatestData() []domain.DayReport {
 
 	err = json.Unmarshal([]byte(data), &response)
 	if err != nil {
-		log.Println("Error parsing data, returning fixed DayReport")
-		log.Println(err)
+		log.Printf("Error parsing data, returning fixed DayReport: %s", err)
+		log.Println(data)
 		yesterday := time.Now().AddDate(0, 0, -1)
 		return []domain.DayReport{
 			{ReportDate: yesterday, Energy: 0},
