@@ -96,8 +96,6 @@ func fetchData(url string) (string, error) {
 	// Serialize the payload to JSON
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
-		log.Printf("Error serializing payload: %s, %s", err, payload)
-
 		return "", err
 	}
 
@@ -124,12 +122,14 @@ func fetchData(url string) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Printf("Error while fetching data: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("Error while reading response body: %s", err)
 		return "", err
 	}
 
