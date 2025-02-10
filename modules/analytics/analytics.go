@@ -11,7 +11,7 @@ import (
 
 var db *sql.DB
 
-func UpdateEnergyHistory(dayReports []domain.DayReport, weather domain.Weather) {
+func UpdateHistory(dayReports []domain.DayReport, weather domain.Weather) {
 	connect()
 	for _, report := range dayReports {
 		updateEnergy(report)
@@ -23,7 +23,7 @@ func UpdateEnergyHistory(dayReports []domain.DayReport, weather domain.Weather) 
 func updateWeather(weather domain.Weather) {
 	log.Printf("Store weather data for date: %s ...", weather.ReportDate.String())
 
-	query := "INSERT IGNORE INTO `weather_history` (`reporting_date`, `cloudiness`, `day_minutes`) VALUES (?, ?, ?);"
+	query := "INSERT INTO `weather_history` (`reporting_date`, `cloudiness`, `day_minutes`) VALUES (?, ?, ?);"
 	insert, err := db.Prepare(query)
 	if err != nil {
 		log.Fatalf("Impossible to insert weather data: %s", err)

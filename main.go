@@ -12,7 +12,7 @@ func main() {
 	log.Println("Hello, Solar Viewer! Start updating the data...")
 	dayReports := nepviewer.FetchLatestData()
 	weatherReport := weather.FetchWeather()
-	analytics.UpdateEnergyHistory(dayReports, weatherReport)
+	analytics.UpdateHistory(dayReports, weatherReport)
 
 	log.Println(weatherReport)
 	log.Println("Update is done.")
