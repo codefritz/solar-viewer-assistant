@@ -101,6 +101,7 @@ func fetchData(url string) (string, error) {
 
 	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonPayload)))
 	if err != nil {
+		log.Printf("Error while creating request: %s", err)
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
