@@ -40,7 +40,9 @@ func updateWeather(weather domain.Weather) {
 func updateEnergy(entry domain.DayReport) {
 	log.Printf("Store analytics data for date: %s ...", entry.ReportDate.String())
 
-	query := "INSERT IGNORE INTO `energy_history` (`reporting_date`, `energy_kw`) VALUES (?, ?);"
+	query := `INSERT IGNORE INTO energy_history (reporting_date, energy_kw) 
+       			VALUES (?, ?)
+       			ON DUPLICATE KEY UPDATE energy_kw = VALUES(energy_kw);`
 	insert, err := db.Prepare(query)
 	if err != nil {
 		log.Fatalf("Impossible to insert energy data: %s", err)
