@@ -54,7 +54,6 @@ func FetchLatestData() []domain.DayReport {
 	err = json.Unmarshal([]byte(data), &response)
 	if err != nil {
 		log.Printf("Error parsing data, returning fixed DayReport: %s", err)
-		log.Println(data)
 		yesterday := time.Now().AddDate(0, 0, -1)
 		return []domain.DayReport{
 			{ReportDate: yesterday, Energy: 0},
@@ -97,6 +96,8 @@ func fetchData(url string) (string, error) {
 	// Serialize the payload to JSON
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
+		log.Printf("Error serializing payload: %s, %s", err, payload)
+
 		return "", err
 	}
 
