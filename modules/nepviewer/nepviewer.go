@@ -132,5 +132,7 @@ func fetchData(url string) (string, error) {
 		return "", err
 	}
 
+	log.Printf("Fetched data: %s", body)
+
 	return string(body), nil
 }
