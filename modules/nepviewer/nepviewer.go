@@ -117,8 +117,6 @@ func fetchData(url string) (string, error) {
 	req.Header.Set("client", "web")
 	req.Header.Set("lan", "1")
 	req.Header.Set("oem", "NEP")
-	req.Header.Set("sec-ch-ua-mobile", "?0")
-	req.Header.Set("sec-ch-ua-platform", "macOS")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
