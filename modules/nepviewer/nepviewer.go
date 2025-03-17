@@ -124,6 +124,12 @@ func fetchData(url string) (string, error) {
 		log.Printf("Error while fetching data: %s", err)
 		return "", err
 	}
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("Error while fetching data: %s", resp.Status)
+		return "", err
+	}
+
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
