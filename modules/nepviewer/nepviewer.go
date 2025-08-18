@@ -89,10 +89,10 @@ func fetchData(url string) (string, error) {
 	sign := os.Getenv("SIGN")
 	// Create the request payload
 	payload := RequestPayload{
-		Types: 3,
-		// RangeDate: "2025-03-01~2025-03-31",
-		RangeDate: "",
-		Sid:       nepUser,
+		Types:     3,
+		RangeDate: "2025-08-01~2025-08-01",
+		// RangeDate: "",
+		Sid: nepUser,
 	}
 	// Serialize the payload to JSON
 	jsonPayload, err := json.Marshal(payload)
